@@ -95,7 +95,7 @@ class Appointment(models.Model):
     Appointment_end_date = models.DateTimeField(null=True,blank=True)
     Assigned_doctor = models.ForeignKey(User,on_delete=models.PROTECT)
     Reason_for_Appointment = models.TextField(max_length=2500)
-    Appointment_status = models.CharField(max_length=200,choices=(("active","active"),("waiting","waiting"),("cancelled","cancelled"),("finished","finished")),default="W")
+    Appointment_status = models.CharField(max_length=200,choices=(("active","active"),("waiting","waiting"),("cancelled","cancelled"),("finished","finished")),default="waiting")
 
 
 
