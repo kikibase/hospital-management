@@ -1,4 +1,3 @@
-from datetime import datetime
 from django.db import models
 from django.contrib.auth.models import User
 from django.http import HttpResponseServerError
@@ -28,12 +27,12 @@ class staff_type(models.Model):#only if staff
     def __str__(self):
         return f"MR/MRS {self.user} is a {self.type}"
 
-    def save(self, *args, **kwargs) -> None: #when creating reference, ensure that the refernce is unique
-        S = staff_type.objects.filter(user = self.user)
-        if S.exists() :
-            raise HttpResponseServerError
+   #def save(self, *args, **kwargs) -> None: #when creating reference, ensure that the refernce is unique
+   #    S = staff_type.objects.filter(user = self.user)
+   #    if S.exists() :
+   #        raise HttpResponseServerError
 
-        super().save(*args, **kwargs)
+   #    super().save(*args, **kwargs)
 
 
 
@@ -71,6 +70,7 @@ class Patient(models.Model):
     Patient_blood_genotype = models.CharField(max_length=200)
     Patient_age = models.IntegerField()
     Patient_gender = models.CharField(max_length=25, choices=GENDER,default="UNDECIDED")
+    Alergies = models.TextField()
 
     def __str__(self):
         return self.Patient_lastname +" " + self.Patient_firstname + " Details"
@@ -94,7 +94,7 @@ class Appointment(models.Model):
     Appointment_start_date = models.DateTimeField()
     Appointment_end_date = models.DateTimeField(null=True,blank=True)
     Assigned_doctor = models.ForeignKey(User,on_delete=models.PROTECT)
-    Reason_for_Appointment = models.TextField(max_length=2500)
+    Reason_for_Appointment = models.TextField(max_length=2500, null=True,blank=True)
     Appointment_status = models.CharField(max_length=200,choices=(("active","active"),("waiting","waiting"),("cancelled","cancelled"),("finished","finished")),default="waiting")
 
 
@@ -129,10 +129,13 @@ class Medicine(models.Model):
     quantity_available = models.IntegerField()
     nafdac_no = models.CharField(max_length=200)
     last_updated = models.DateTimeField(auto_now_add=True)
-    amount = models.IntegerField()
+    price = models.IntegerField()
+
 
     def __str__(self):
         return self.name + " Drug Details"
+
+
 
 class Donors(models.Model):
     name = models.CharField(max_length=250)
@@ -186,3 +189,13 @@ class Birth_report(models.Model):
 
         super().save(*args, **kwargs)
 
+class Patient_medical_log(models.Model):
+    patient = models.ForeignKey(Patient, on_delete=models.PROTECT)
+    diagnosis = models.TextField(null=True,blank=True)
+    temperature = models.IntegerField(null=True,blank=True)
+    blood_pressure = models.IntegerField(null=True,blank=True)
+    complaint = models.TextField(null=True,blank=True)
+
+class Medicine_log(models.Model):
+    Medicine = models.ForeignKey(Medicine,on_delete=models.PROTECT)
+    Date_prescribed = models.DateField()

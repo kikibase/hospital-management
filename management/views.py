@@ -180,7 +180,15 @@ def dashboard(request):
             dtnw = datetime.now()
             dt = f"{dtnw.date()}T{dtnw.hour}:{'%02d' % (dtnw.minute)}:00"
             context = {"available_doctors" : staff_type.objects.filter(type = "D"),"patients" : Patient.objects.all(),"dtnw":dt, "appointments": Appointment.objects.all() }
+            if request.session.get('_old_post'):
+                context['response'] = request.session.get('_old_post')
+                del request.session['_old_post']
             return render(request, 'management/Pages/dashboard-reception.html', context)
+        elif staff_type.objects.get(user = request.user).type == "N" :
+            dtnw = datetime.now()
+            dt = f"{dtnw.date()}T{dtnw.hour}:{'%02d' % (dtnw.minute)}:00"
+            context = {"available_doctors" : staff_type.objects.filter(type = "D"),"patients" : Patient.objects.all(),"dtnw":dt, "appointments": Appointment.objects.all() }
+            return render(request, 'management/Pages/dashboard-nurse.html', context)
     else:
         return redirect(request,"login_page")
 
@@ -189,7 +197,7 @@ def check_patient(request):
     if request.method == 'POST':
         try:
             Patient.objects.get(Patient_lastname = request.POST['lname'],Patient_firstname = request.POST['fname'],Patient_email_address = request.POST['email'])
-            #request.session['_old_post'] = {'response':['Patient instance already exists']}
+            request.session['_old_post'] = 'Patient instance already exists'
             return redirect('/management/dashboard')
         except:
             return render(request,'management/Pages/add_patient.html')

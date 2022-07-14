@@ -11,4 +11,4 @@ admin.site.register(Donors)
 admin.site.register(Birth_report)
 admin.site.register(Appointment)
 admin.site.register(staff_type)
-
+admin.site.register(Patient_medical_log)
