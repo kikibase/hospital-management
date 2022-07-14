@@ -1,5 +1,5 @@
 from django.shortcuts import redirect, render
-from .models import Alloted_Beds, Birth_report, Department, Donors, Medicine, Patient,staff_type
+from .models import Alloted_Beds, Appointment, Birth_report, Department, Donors, Medicine, Patient,staff_type
 from django.contrib.auth import authenticate,login,logout
 from django.contrib.auth.decorators import login_required
 from .forms import NewUserForm
@@ -179,7 +179,7 @@ def dashboard(request):
         if staff_type.objects.get(user = request.user).type == "R" :
             dtnw = datetime.now()
             dt = f"{dtnw.date()}T{dtnw.hour}:{'%02d' % (dtnw.minute)}:00"
-            context = {"available_doctors" : staff_type.objects.filter(type = "D"),"patients" : Patient.objects.all(),"dtnw":dt }
+            context = {"available_doctors" : staff_type.objects.filter(type = "D"),"patients" : Patient.objects.all(),"dtnw":dt, "appointments": Appointment.objects.all() }
             return render(request, 'management/Pages/dashboard-reception.html', context)
     else:
         return redirect(request,"login_page")
@@ -193,3 +193,14 @@ def check_patient(request):
             return redirect('/management/dashboard')
         except:
             return render(request,'management/Pages/add_patient.html')
+
+def book_appointment(request):
+    if request.user.is_staff:
+        if request.method == "POST":
+            Appointment.objects.create(
+                Patient = Patient.objects.get(id = request.POST['selpat']) ,
+                Appointment_start_date = request.POST['date-time'],
+                Assigned_doctor = User.objects.get(id = request.POST['seldoct']),
+                Reason_for_Appointment = request.POST['reason'],
+            )
+        return redirect(request.POST['backlink'])

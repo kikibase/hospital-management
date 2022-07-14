@@ -25,6 +25,17 @@ class staff_type(models.Model):#only if staff
     gender = models.CharField(max_length=10)
     location = models.CharField(max_length=200)#THe wing and room
 
+    def __str__(self):
+        return f"MR/MRS {self.user} is a {self.type}"
+
+    def save(self, *args, **kwargs) -> None: #when creating reference, ensure that the refernce is unique
+        S = staff_type.objects.filter(user = self.user)
+        if S.exists() :
+            raise HttpResponseServerError
+
+        super().save(*args, **kwargs)
+
+
 
 class Department(models.Model):
     Department_name = models.CharField(max_length=250, unique=True, blank=True, null=True)
@@ -81,17 +92,15 @@ class Bill(models.Model):
 class Appointment(models.Model):
     Patient = models.ForeignKey(Patient,on_delete=models.PROTECT)
     Appointment_start_date = models.DateTimeField()
-    Appointment_end_date = models.DateTimeField()
+    Appointment_end_date = models.DateTimeField(null=True,blank=True)
     Assigned_doctor = models.ForeignKey(User,on_delete=models.PROTECT)
     Reason_for_Appointment = models.TextField(max_length=2500)
-    Appointment_status = models.CharField(max_length=200,choices=(("A","active"),("W","waiting"),("C","cancelled"),("F","finished")),default="W")
+    Appointment_status = models.CharField(max_length=200,choices=(("active","active"),("waiting","waiting"),("cancelled","cancelled"),("finished","finished")),default="W")
 
 
-    def __str__(self):
-        return self.Fullname + " Appointment"
 
     def save(self, *args, **kwargs) -> None: #when creating reference, ensure that the refernce is unique
-        S = staff_type.objects.get(user = self.Assigned_doctor)
+        S = staff_type.objects.get(user = self.Assigned_doctor).type
         if S != "D":
             raise HttpResponseServerError
 
