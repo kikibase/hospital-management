@@ -1,10 +1,12 @@
-from multiprocessing import context
+from django.http import HttpResponse
 from django.shortcuts import redirect, render
-from management.models import Alloted_Beds, Birth_report, Department, Doctor, Donors, Medicine, Nurse, Patient
+from .models import Alloted_Beds, Birth_report, Department, Doctor, Donors, Medicine, Patient,staff_type
 from django.contrib.auth import authenticate,login,logout
 from django.contrib.auth.decorators import login_required
-from management.forms import NewUserForm,CreateDoctorPofile, CreateNurseProfile
+from .forms import NewUserForm,CreateDoctorPofile
 from django.contrib.auth.models import User
+from rest_framework.decorators import api_view
+from rest_framework.response import Response
 
 
 
@@ -16,7 +18,7 @@ def welcome_page(request):
        user = authenticate(request,username=username,password=password)
        if user is not None:
            login(request,user)
-           return redirect('departments_page')
+           return redirect('dashboard')
     return render(request,'management/Pages/login_page.html')
 
 # This view is responsible for creating a new user instance
@@ -168,7 +170,27 @@ def patient_details_page(request,pk):
     }
     return render(request,'management/Pages/patients_details.html',context)
 
-# This viiew is responsible for the logout functionality
+# This view is responsible for the logout functionality
 def logout_user(request):
     logout(request)
     return redirect('login_page')
+
+    #okiki is here
+def dashboard(request):
+    sass = request.session.get('_old_post')
+    if sass:
+        context = dict(sass)
+        sass.clear()    
+        return render(request, 'management/Pages/dashboard-nurse.html',context)
+    else:
+        return render(request, 'management/Pages/dashboard-nurse.html')
+
+
+def check_patient(request):
+    if request.method == 'POST':
+        try:
+            Patient.objects.get(Patient_lastname = request.POST['lname'],Patient_firstname = request.POST['fname'],Patient_email_address = request.POST['email'])
+            request.session['_old_post'] = {'response':['Patient instance already exists']}
+            return redirect('/management/dashboard')
+        except:
+            return render(request,'management/Pages/add_patient.html')

@@ -1,11 +1,10 @@
 from django.shortcuts import render
 from management.models import Doctor,Appointment
-from base.forms import MakeAppointment
 
 
 # Create your views here.
 def landing_page(request):
-    forms = MakeAppointment()
+    #forms = MakeAppointment()
     if request.method == 'POST':
         fullname=request.POST['fullname']
         email=request.POST['contact_email']
@@ -23,10 +22,10 @@ def landing_page(request):
         }
         print(data)
 
-    context = {
-        'forms':forms
-    }
-    return render(request,'base/Pages/landing_page.html',context)
+    #context = {
+    #    'forms':forms
+    #}
+    return render(request,'base/Pages/landing_page.html')#,context)
 
 def login_page(request):
 

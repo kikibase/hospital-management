@@ -1,9 +1,26 @@
-from email.policy import default
+from datetime import datetime
 from django.db import models
-from django.contrib.auth import get_user_model
 from django.contrib.auth.models import User
 
 # Create your models here.
+
+class staff_type(models.Model):#only if staff
+    staff_types =   [
+        ('R' ,'RECEPTION'),
+        ('N' , 'NURSE'),
+        ('D' , 'DOCTOR'),
+        ('P' , 'PHARMACY'),
+        ('L' , 'LAB'),
+        ('A' , 'ACCOUNT'),
+    ]
+    
+                    
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    type = models.CharField(max_length=200 ,choices= staff_types)
+    Profile_image = models.ImageField(blank=True, null=True,default="Null")
+    staff_phone_number = models.CharField(max_length=250)
+    staff_location = models.CharField(max_length=250)
+
 class Department(models.Model):
     Department_name = models.CharField(max_length=250, unique=True, blank=True, null=True)
     Department_details = models.TextField(max_length=1000, null=True, blank=True)
@@ -13,8 +30,9 @@ class Department(models.Model):
 
 class Room(models.Model):
     Room_location = models.CharField(max_length=250, null=True,blank=True)
-    Room_ID = models.CharField(max_length=100, null=True, blank=True, unique=True)
-    Room_availability = models.BooleanField(default=True)
+    Room_NUMBER = models.CharField(max_length=100, null=True, blank=True, unique=True)
+    
+
 
     def __str__(self):
         return "Located at :" + self.Room_location 
@@ -25,6 +43,8 @@ GENDER = (
         ('FEMALE','FEMALE')
     )
 
+
+
 class Doctor(models.Model):
     Doctor_user_instance = models.OneToOneField(User,on_delete=models.CASCADE,null=True, blank=True)
     Profile_image = models.ImageField(blank=True, null=True,default="Null")
@@ -34,7 +54,7 @@ class Doctor(models.Model):
     Doctor_department = models.ForeignKey(Department,on_delete=models.CASCADE, related_name="doctor_department", null=True, blank=True)
     Doctor_specialization = models.CharField(max_length=250, null=True, blank=True)
     Doctor_phone_number = models.CharField(max_length=250, null=True, blank=True)
-    Doctor_email_address = models.EmailField(default="firstname.lastname@hospitalmanagement.com", null=True, blank=True)
+    Doctor_email_address = models.EmailField(null=True, blank=True)
     Doctor_location = models.CharField(max_length=250,null=True, blank=True)
 
     def __str__(self):
@@ -43,18 +63,15 @@ class Doctor(models.Model):
 
 
 class Patient(models.Model):
-    Patient_id = models.CharField(unique=True, max_length=200, default="Please Update",null=True,blank=True)
     Patient_lastname = models.CharField(max_length=250,null=True, blank=True)
     Patient_firstname = models.CharField(max_length=250,null=True, blank=True)
-    Patient_email_address = models.EmailField(max_length=250, null=True, blank=True, default="Null_provided@email.com")
+    Patient_email_address = models.EmailField(max_length=250, null=True, blank=True)
     Patient_phone_number = models.CharField(max_length=120, null=True, blank=True)
     Patient_address = models.CharField(max_length=350,null=True,blank=True)
-    Patient_doctor = models.ForeignKey(Doctor,on_delete=models.CASCADE, related_name="patient_doctor")
-    Patient_blood_group = models.CharField(max_length=200, default="Please Update")
-    Patient_blood_genotype = models.CharField(max_length=200, default="Please Update")
-    Patient_age = models.IntegerField(null=True,blank=True)
+    Patient_blood_group = models.CharField(max_length=200)
+    Patient_blood_genotype = models.CharField(max_length=200)
+    Patient_age = models.IntegerField()
     Patient_gender = models.CharField(max_length=25, choices=GENDER,default="UNDECIDED")
-    Patient_room = models.ForeignKey(Room, on_delete=models.CharField, null=True, blank=True)
 
     def __str__(self):
         return self.Patient_lastname +" " + self.Patient_firstname + " Details"
@@ -74,66 +91,33 @@ class Bill(models.Model):
         return self.patient_name.Patient_lastname + "PAYMENT STATUS IS " + self.payment_status
 
 class Appointment(models.Model):
-    Fullname = models.CharField(max_length=250)
-    Contact_email = models.EmailField(max_length=500, default="notprovided@example.com", null=True, blank=True)
-    Contact_phone = models.CharField(max_length=250)
-    Appointment_date = models.DateTimeField()
-    Assigned_doctor = models.ForeignKey(Doctor,on_delete=models.CASCADE, null=True,blank=True)
+    Patient = models.ForeignKey(Patient,on_delete=models.PROTECT)
+    Appointment_start_date = models.DateTimeField()
+    Appointment_end_date = models.DateTimeField()
+    Assigned_doctor = models.ForeignKey(Doctor,on_delete=models.PROTECT)
     Reason_for_Appointment = models.TextField(max_length=2500)
-    Appointment_completed = models.BooleanField(default=False, null=True, blank=True)
+    Appointment_status = models.CharField(max_length=200,choices=(("A","active"),("W","waiting"),("C","cancelled"),("F","finished")),default="W")
 
-    class Meta:
-        ordering = ["Appointment_date"]
 
     def __str__(self):
         return self.Fullname + " Appointment"
+
     
 
 class Alloted_Beds(models.Model):
-    Bed_id = models.ForeignKey(Room,on_delete=models.CASCADE,null=True, blank=True) 
-    Alloted_patient = models.ForeignKey(Patient, on_delete=models.CASCADE)
-    Alloted_time = models.DateTimeField(auto_now_add=True,null=True, blank=True)
-    # Discharge_time = models.DateField(null=False, blank=True)
+    Room = models.ForeignKey(Room,on_delete=models.CASCADE,null=True, blank=True)
+    Bed_number = models.IntegerField()
+
+
+class Roomlog(models.Model):
+    Room=models.ForeignKey(Room,on_delete=models.PROTECT)
+    Bed = models.ForeignKey(Alloted_Beds, on_delete=models.PROTECT)
+    Patient = models.ForeignKey(Patient, on_delete=models.PROTECT)
+    checkin_time = models.DateTimeField()
+    checkout_time = models.DateTimeField(null=True, blank = True)
 
     def __str__(self):
-        return self.Bed_id.Room_ID + " is Alloted to " + self.Alloted_patient.Patient_lastname + " " + self.Alloted_patient.Patient_firstname
-
-class Nurse(models.Model):
-    Profile_image = models.ImageField(blank=True, null=True,default="Null")
-    Nurse_user_instance = models.OneToOneField(User,on_delete=models.CASCADE, null=True, blank=True)
-    Nurse_lastname = models.CharField(max_length=250)
-    Nurse_firstname = models.CharField(max_length=250)
-    Nurse_email_address = models.EmailField(max_length=250, null=True, blank=True,default="email@hospitalmanagent.com")
-    Nurse_phone_number = models.CharField(max_length=250)
-    Nurse_location = models.CharField(max_length=250)
-
-    def __str__(self):
-        return "Nurse " + self.Nurse_lastname + " " + self.Nurse_firstname
-
-class Other_Staff(models.Model):
-
-    DESIGNATION = (
-        ('UNDECIDED','UNDECIDED'),
-        ('CLEANER','CLEANER'),
-        ('CLERK','CLERK'),
-        ('COOK','COOK'),
-        ('MATRON','MATRON'),
-        ('MIDWIFE','MIDWIFE'),
-        ('DOCTOR IN TRAINING','DOCTOR IN TRAINING'),
-        ('LAB TECHNICIAN','LAB TECHNICIAN'),
-        ('LAB ASSISTANT', 'LAB ASSISTANT'),
-
-    )
-
-    Other_lastname = models.CharField(max_length=250)
-    Other_firstname = models.CharField(max_length=250)
-    Other_email= models.EmailField(max_length=250, null=True, blank=True, default="otherstaff@hospitalmanagement.com")
-    Other_phone = models.CharField(max_length=250)
-    Other_address = models.CharField(max_length=250)
-    Other_role = models.CharField(max_length=100,choices=DESIGNATION, default="UNDECIDED",null=True, blank=True)
-
-    def __str__(self):
-        return self.Other_firstname + " " + self.Other_lastname + " " +self.Other_role
+        return f"Room: {self.Room.ROOM_NUMBER} at {self.Room.ROOM_LOCATION} is logged by {self.Patient.Patient_lastname} {self.Patient.Patient_firstname} between {self.checkin_time} to {(self.checkout_time if self.checkout_time is not None else 'present')} "    
 
 
 class Medicine(models.Model):
@@ -141,7 +125,6 @@ class Medicine(models.Model):
     quantity_available = models.IntegerField()
     nafdac_no = models.CharField(max_length=200)
     last_updated = models.DateTimeField(auto_now_add=True)
-    entered_by = models.ForeignKey(Other_Staff,on_delete=models.CASCADE,null=True, blank=True)
     amount = models.IntegerField()
 
     def __str__(self):

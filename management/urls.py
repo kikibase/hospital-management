@@ -17,4 +17,7 @@ urlpatterns = [
     path('update_doctor_profile/<int:pk>/',views.update_user_profile,name="update_profile"),
     path('update_nurse_profile/<int:pk>/',views.update_nurse_profile,name="update_profile"),
     path('logout_user/',views.logout_user, name="logout"),
+    #Okiki starts here
+    path('dashboard/',views.dashboard, name="dashboard"),
+    path('check_patient/',views.check_patient, name="check_patient"),
 ]
