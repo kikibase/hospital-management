@@ -1,6 +1,7 @@
 from datetime import datetime
 from django.db import models
 from django.contrib.auth.models import User
+from django.http import HttpResponseServerError
 
 # Create your models here.
 
@@ -18,8 +19,12 @@ class staff_type(models.Model):#only if staff
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     type = models.CharField(max_length=200 ,choices= staff_types)
     Profile_image = models.ImageField(blank=True, null=True,default="Null")
-    staff_phone_number = models.CharField(max_length=250)
-    staff_location = models.CharField(max_length=250)
+    phone_number = models.CharField(max_length=250)
+    location = models.CharField(max_length=250)
+    specialization = models.CharField(max_length=200, default="none")#used mostly for doctors with specialized fields
+    gender = models.CharField(max_length=10)
+    location = models.CharField(max_length=200)#THe wing and room
+
 
 class Department(models.Model):
     Department_name = models.CharField(max_length=250, unique=True, blank=True, null=True)
@@ -43,23 +48,6 @@ GENDER = (
         ('FEMALE','FEMALE')
     )
 
-
-
-class Doctor(models.Model):
-    Doctor_user_instance = models.OneToOneField(User,on_delete=models.CASCADE,null=True, blank=True)
-    Profile_image = models.ImageField(blank=True, null=True,default="Null")
-    Doctor_firstname = models.CharField(max_length=250, null=True,blank=True)
-    Doctor_lastname = models.CharField(max_length=250, null=True,blank=True)
-    Doctor_gender = models.CharField(max_length=25, choices=GENDER, default="UNDECIDED")
-    Doctor_department = models.ForeignKey(Department,on_delete=models.CASCADE, related_name="doctor_department", null=True, blank=True)
-    Doctor_specialization = models.CharField(max_length=250, null=True, blank=True)
-    Doctor_phone_number = models.CharField(max_length=250, null=True, blank=True)
-    Doctor_email_address = models.EmailField(null=True, blank=True)
-    Doctor_location = models.CharField(max_length=250,null=True, blank=True)
-
-    def __str__(self):
-        return "Dr. Profile"
-    
 
 
 class Patient(models.Model):
@@ -94,13 +82,20 @@ class Appointment(models.Model):
     Patient = models.ForeignKey(Patient,on_delete=models.PROTECT)
     Appointment_start_date = models.DateTimeField()
     Appointment_end_date = models.DateTimeField()
-    Assigned_doctor = models.ForeignKey(Doctor,on_delete=models.PROTECT)
+    Assigned_doctor = models.ForeignKey(User,on_delete=models.PROTECT)
     Reason_for_Appointment = models.TextField(max_length=2500)
     Appointment_status = models.CharField(max_length=200,choices=(("A","active"),("W","waiting"),("C","cancelled"),("F","finished")),default="W")
 
 
     def __str__(self):
         return self.Fullname + " Appointment"
+
+    def save(self, *args, **kwargs) -> None: #when creating reference, ensure that the refernce is unique
+        S = staff_type.objects.get(user = self.Assigned_doctor)
+        if S != "D":
+            raise HttpResponseServerError
+
+        super().save(*args, **kwargs)
 
     
 
@@ -150,20 +145,35 @@ class Donors(models.Model):
 class Operation(models.Model):
     patient = models.ForeignKey(Patient,on_delete=models.CASCADE,max_length=250)
     description = models.TextField(max_length=2048, null=True, blank=True)
-    doctor = models.ForeignKey(Doctor,on_delete=models.CASCADE, null=True, blank=True)
+    doctor = models.ForeignKey(User,on_delete=models.CASCADE, null=True, blank=True)
     date = models.DateTimeField()
     emergency = models.BooleanField(default=False)
     
     def __str__(self):
         return self.patient.Patient_lastname + self.patient.Patient_firstname + " Operation Details"
 
+    def save(self, *args, **kwargs) -> None: #when creating reference, ensure that the refernce is unique
+        S = staff_type.objects.get(user = self.Assigned_doctor)
+        if S != "D":
+            raise HttpResponseServerError
+
+        super().save(*args, **kwargs)
+    
+
 class Birth_report(models.Model):
     patient = models.ForeignKey(Patient,on_delete=models.CASCADE,null=True, blank=True)
     description = models.TextField(max_length=2048, null=True,blank=True)
-    doctor = models.ForeignKey(Doctor,on_delete=models.CASCADE,blank=True, null=True)
+    doctor = models.ForeignKey(User,on_delete=models.CASCADE,blank=True, null=True)
     mode_of_delivery = models.CharField(max_length=250,null=True, blank=True)
     date_and_time = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         return self.patient.Patient_lastname + self.patient.Patient_firstname + " Birth Report"
+
+    def save(self, *args, **kwargs) -> None: #when creating reference, ensure that the refernce is unique
+        S = staff_type.objects.get(user = self.Assigned_doctor)
+        if S != "D":
+            raise HttpResponseServerError
+
+        super().save(*args, **kwargs)
 

@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from management.models import Doctor,Appointment
+from management.models import Appointment, staff_type
 
 
 # Create your views here.
@@ -36,7 +36,7 @@ def signup_page(request):
     return render(request,'base/Pages/signup_page.html')
 
 def doctor_page(request):
-    doctors = Doctor.objects.all()
+    doctors = staff_type.objects.filter(type = "DOCTOR").user
     context = {
         'doctors':doctors
     }

@@ -217,8 +217,10 @@
                                                                             <input type="text" id="emailWithTitle" name="email" class="form-control" placeholder="xxxx@xxx.xx" />
                                                                         </div>
                                                                         <div class="col mb-0">
-                                                                            <label for="dobWithTitle" class="form-label">DOB</label>
-                                                                            <input type="text" id="dobWithTitle" class="form-control" placeholder="DD / MM / YY" />
+                                                                            <label for="html5-datetime-local-input" class="form-label">DOB</label>
+                                                                            <div class="col-md-10">
+                                                                                <input class="form-control" type="datetime-local" value={{dtnw}} name="DOB" id="html5-datetime-local-input">
+                                                                            </div>
                                                                         </div>
                                                                     </div>
                                                                 </div>
@@ -243,10 +245,10 @@
                                             <div class="col-lg-4 col-md-6">
                                                 <div class="mt-3">
                                                     <!-- Button trigger modal -->
-                                                    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalCenter">Schedule</button>
+                                                    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalCenter1">Schedule</button>
 
                                                     <!-- Modal -->
-                                                    <div class="modal fade" id="modalCenter" tabindex="-1" aria-hidden="true">
+                                                    <div class="modal fade" id="modalCenter1" tabindex="-1" aria-hidden="true">
                                                         <div class="modal-dialog modal-dialog-centered" role="document">
                                                             <form action="/management/check_patient/" method="post" class="modal-content">
                                                                 {% csrf_token %}
@@ -257,35 +259,36 @@
                                                                 <div class="modal-body">
                                                                     <div class="row">
                                                                         <div class="col mb-0">
-                                                                            <label for="id_Appointment_completed">Appointment completed:</label>
-                                                                            <select name="Appointment_completed" id="id_Appointment_completed">
-                                                                                <option value="unknown">Unknown</option>
-                                                                                
-                                                                                <option value="true">Yes</option>
-                                                                                
-                                                                                <option value="false" selected="">No</option>
-                                                        
+                                                                            <label class="form-label" for="Seldoct">Select Doctor:</label>
+                                                                            <select class="form-control" name="seldoct" id="seldoct">
+                                                                                <option class="form-control" value="pick from the list below">--</option>
+                                                                                {% for doctor in available_doctors %}
+                                                                                <option class="form-control" value={{doctor}}>{{doctor.user}}</option>
+                                                                                {% endfor %}                                                        
                                                                             </select>
                                                                         </div>
                                                                         <div class="col mb-0">
-                                                                            <label for="fname" class="form-label">First-Name</label>
-                                                                            <input type="text" id="fname" name="fname" class="form-control" placeholder="Doe" />
+                                                                            <label class="form-label" for="Selpat">Select Patient:</label>
+                                                                            <select class="form-control" name="selpat" id="selpat">
+                                                                                <option class="form-control" value="pick from the list below">--</option>
+                                                                                {% for patient in patients %}
+                                                                                <option class="form-control" value={{patient}}>{{patient}}</option>
+                                                                                {% endfor %}                                                        
+                                                                            </select>
                                                                         </div>
                                                                     </div>
                                                                     <div class="row g-2">
                                                                         <div class="col mb-0">
-                                                                            <label for="emailWithTitle" class="form-label">Email</label>
-                                                                            <input type="text" id="emailWithTitle" name="email" class="form-control" placeholder="xxxx@xxx.xx" />
-                                                                        </div>
-                                                                        <div class="col mb-0">
-                                                                            <label for="dobWithTitle" class="form-label">DOB</label>
-                                                                            <input type="text" id="dobWithTitle" class="form-control" placeholder="DD / MM / YY" />
+                                                                            <label for="html5-datetime-local-input" class="form-label">Date and time for appointment</label>
+                                                                            <div class="col-md-10">
+                                                                                <input class="form-control" type="datetime-local" value={{dtnw}} name="date-time" id="html5-datetime-local-input">
+                                                                            </div>
                                                                         </div>
                                                                     </div>
                                                                 </div>
                                                                 <div class="modal-footer">
                                                                     <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Close</button>
-                                                                    <button type="submit" class="btn btn-primary">Add Customer</button>
+                                                                    <button type="submit" class="btn btn-primary">Add Appointment</button>
                                                                 </div>
                                                             </form>
                                                         </div>
@@ -304,10 +307,10 @@
                                             <div class="col-lg-4 col-md-6">
                                                 <div class="mt-3">
                                                     <!-- Button trigger modal -->
-                                                    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalCenter">Add</button>
+                                                    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalCenter2">Add</button>
 
                                                     <!-- Modal -->
-                                                    <div class="modal fade" id="modalCenter" tabindex="-1" aria-hidden="true">
+                                                    <div class="modal fade" id="modalCenter2" tabindex="-1" aria-hidden="true">
                                                         <div class="modal-dialog modal-dialog-centered" role="document">
                                                             <form action="/management/check_patient/" method="post" class="modal-content">
                                                                 {% csrf_token %}

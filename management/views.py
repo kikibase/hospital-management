@@ -1,12 +1,10 @@
-from django.http import HttpResponse
 from django.shortcuts import redirect, render
-from .models import Alloted_Beds, Birth_report, Department, Doctor, Donors, Medicine, Patient,staff_type
+from .models import Alloted_Beds, Birth_report, Department, Donors, Medicine, Patient,staff_type
 from django.contrib.auth import authenticate,login,logout
 from django.contrib.auth.decorators import login_required
-from .forms import NewUserForm,CreateDoctorPofile
+from .forms import NewUserForm
+from datetime import datetime
 from django.contrib.auth.models import User
-from rest_framework.decorators import api_view
-from rest_framework.response import Response
 
 
 
@@ -39,8 +37,8 @@ def sign_up_page(request):
 @login_required(login_url=welcome_page)
 def update_user_profile(request,pk):
     user = User.objects.get(id=pk)
-    Doctor.objects.get_or_create(Doctor_user_instance=user)
-    this = Doctor.objects.get(Doctor_user_instance=user)
+   #Doctor.objects.get_or_create(Doctor_user_instance=user)
+   #this = Doctor.objects.get(Doctor_user_instance=user)
     profile_form = CreateDoctorPofile(instance=this)
     if request.method == 'POST':
         profile_form = CreateDoctorPofile(request.POST,instance=this)
@@ -59,9 +57,9 @@ def update_user_profile(request,pk):
 @login_required(login_url=welcome_page)
 def update_nurse_profile(request,pk):
     user = User.objects.get(id=pk)
-    Nurse.objects.get_or_create(Nurse_user_instance=user)
-    that = Nurse.objects.get(Nurse_user_instance=user)
-    user_form = CreateNurseProfile(instance=that)
+    #Nurse.objects.get_or_create(Nurse_user_instance=user)
+    #that = Nurse.objects.get(Nurse_user_instance=user)
+    #user_form = CreateNurseProfile(instance=that)
     
     if request.method == 'POST':
         profile_form = CreateNurseProfile(request.POST,instance=that)
@@ -177,20 +175,21 @@ def logout_user(request):
 
     #okiki is here
 def dashboard(request):
-    sass = request.session.get('_old_post')
-    if sass:
-        context = dict(sass)
-        sass.clear()    
-        return render(request, 'management/Pages/dashboard-nurse.html',context)
+    if request.user.is_staff:
+        if staff_type.objects.get(user = request.user).type == "R" :
+            dtnw = datetime.now()
+            dt = f"{dtnw.date()}T{dtnw.hour}:{'%02d' % (dtnw.minute)}:00"
+            context = {"available_doctors" : staff_type.objects.filter(type = "D"),"patients" : Patient.objects.all(),"dtnw":dt }
+            return render(request, 'management/Pages/dashboard-reception.html', context)
     else:
-        return render(request, 'management/Pages/dashboard-nurse.html')
+        return redirect(request,"login_page")
 
 
 def check_patient(request):
     if request.method == 'POST':
         try:
             Patient.objects.get(Patient_lastname = request.POST['lname'],Patient_firstname = request.POST['fname'],Patient_email_address = request.POST['email'])
-            request.session['_old_post'] = {'response':['Patient instance already exists']}
+            #request.session['_old_post'] = {'response':['Patient instance already exists']}
             return redirect('/management/dashboard')
         except:
             return render(request,'management/Pages/add_patient.html')
