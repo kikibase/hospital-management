@@ -21,4 +21,5 @@ urlpatterns = [
     path('dashboard/',views.dashboard, name="dashboard"),
     path('check_patient/',views.check_patient, name="check_patient"),
     path('book_appointment/',views.book_appointment),
+    path('administered/',views.administered),
 ]

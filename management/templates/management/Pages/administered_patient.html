@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en" class="light-style layout-menu-fixed" dir="ltr" data-theme="theme-default" data-assets-path="/static/management/assets/" data-template="vertical-menu-template-free">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0" />
+
+    <title>Dashboard - Analytics | Sneat - Bootstrap 5 HTML Admin Template - Pro</title>
+
+    <meta name="description" content="" />
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="/static/management/assets/img/favicon/favicon.ico" />
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Public+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500;1,600;1,700&display=swap" rel="stylesheet" />
+
+    <!-- Icons. Uncomment required icon fonts -->
+    <link rel="stylesheet" href="/static/management/assets/vendor/fonts/boxicons.css" />
+
+    <!-- Core CSS -->
+    <link rel="stylesheet" href="/static/management/assets/vendor/css/core.css" class="template-customizer-core-css" />
+    <link rel="stylesheet" href="/static/management/assets/vendor/css/theme-default.css" class="template-customizer-theme-css" />
+    <link rel="stylesheet" href="/static/management/assets/css/demo.css" />
+
+    <!-- Vendors CSS -->
+    <link rel="stylesheet" href="/static/management/assets/vendor/libs/perfect-scrollbar/perfect-scrollbar.css" />
+
+    <link rel="stylesheet" href="/static/management/assets/vendor/libs/apex-charts/apex-charts.css" />
+
+    <!-- Page CSS -->
+
+    <!-- Helpers -->
+    <script src="/static/management/assets/vendor/js/helpers.js"></script>
+
+    <!--! Template customizer & Theme config files MUST be included after core stylesheets and helpers.js in the <head> section -->
+    <!--? Config:  Mandatory theme config file contain global vars & default theme options, Set your preferred theme option in this file.  -->
+    <script src="/static/management/assets/js/config.js"></script>
+</head>
+
+<body>
+    <!-- Layout wrapper -->
+    <div class="layout-wrapper layout-content-navbar">
+        <div class="layout-container">
+            {% include 'management/Components/sidebarnew.html' %}
+            <!-- Layout container -->
+            <div class="layout-page">
+                {% include 'management/components/header.html' %}
+
+                <!-- Content wrapper -->
+                <div class="content-wrapper">
+                    <!-- Content -->
+                    <div class="container-xxl flex-grow-1 container-p-y">
+                        <div class="row">
+
+                            <div class="card">
+                                <h5 class="card-header">Administered Patient</h5>
+                                <div class="table-responsive text-nowrap">
+                                    <table class="table table-hover">
+                                        <thead>
+                                            <tr>
+                                                <th>Patient</th>
+                                                <th>Room no</th>
+                                                <th>Bed no</th>
+                                                <th>check meds</th>
+                                                <th>Check-in time</th>
+                                                <th>Notes</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody class="table-border-bottom-0">
+                                            {% for apt in administered_patient %}
+                                            <tr>
+                                                <td><i class="fab fa-angular fa-lg text-danger me-3"></i> <strong>{{apt.Patient}}</strong></td>
+                                                <td>{{apt.Room.Room_NUMBER}}</td>
+                                                <td>{{apt.Bed.Bed_number}}</td>
+                                                <td class="mt-3">
+                                                    <button class="btn btn-primary" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasBottom" aria-controls="offcanvasBottom">
+                                                      view
+                                                    </button>
+                                                    <div class="offcanvas offcanvas-bottom" tabindex="-1" id="offcanvasBottom" aria-labelledby="offcanvasBottomLabel" aria-hidden="true" style="visibility: hidden;">
+                                                        <div class="offcanvas-header">
+                                                            <h5 id="offcanvasBottomLabel" class="offcanvas-title">Prescribed medication for {{apt.Patient}}</h5>
+                                                            <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+                                                        </div>
+                                                        <div class="offcanvas-body">
+                                                            <div class="card">
+                                                                <div class="table-responsive text-nowrap">
+                                                                    <table class="table table-borderless">
+                                                                        <thead>
+                                                                            <tr>
+                                                                                <th>med name</th>
+                                                                                <th>Administered by</th>
+                                                                                <th>Date prescribed</th>
+                                                                                <th>frequency</th>
+                                                                                <th>Decription</th>
+                                                                            </tr>
+                                                                        </thead>
+                                                                        <tbody>
+                                                                            {% for drug in drugs %} {% if drug.room == apt.Room %}
+                                                                            <tr>
+                                                                                <td><i class="fab fa-angular fa-lg text-danger me-3"></i> <strong> {{drug.Medicine.name}} </strong></td>
+                                                                                <td>DR. {{drug.administerd_by.first_name}} {{drug.administerd_by.last_name}}</td>
+                                                                                <td>{{drug.Date_prescribed}}</td>
+                                                                                <td><span class="badge bg-label-primary me-1">{{drug.frequency}} {{drug.frequency_type}}</span></td>
+                                                                                <td>{{drug.more_description}}</td>
+                                                                            </tr>
+                                                                            {%endif%} {%endfor%}
+                                                                        </tbody>
+                                                                    </table>
+                                                                </div>
+                                                            </div>
+                                                            <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="offcanvas">
+                                                          Cancel
+                                                        </button>
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                                <td>{{apt.checkin_time}}</td>
+                                                <td>
+                                                    <div class="mt-3">
+                                                        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalToggle{{apt.id}}">
+                                                          edit/add
+                                                        </button>
+
+                                                        <!-- Modal 1-->
+                                                        <div class="modal fade" id="modalToggle{{apt.id}}" aria-labelledby="modalToggleLabel" tabindex="-1" style="display: none;" aria-hidden="true">
+                                                            <div class="modal-dialog modal-dialog-centered">
+                                                                <div class="modal-content">
+                                                                    <div class="modal-header">
+                                                                        <h5 class="modal-title" id="modalToggleLabel">viewing notes</h5>
+                                                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                                    </div>
+                                                                    <div class="modal-body">coming soon</div>
+                                                                    <div class="modal-footer">
+                                                                        <button class="btn btn-primary" data-bs-target="#modalTogglea{{apt.id}}" data-bs-toggle="modal" data-bs-dismiss="modal">
+                                                                  add notes
+                                                                </button>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <!-- Modal 2-->
+                                                        <div class="modal fade" id="modalTogglea{{apt.id}}" aria-labelledby="modalToggleLabel2" tabindex="-1" aria-hidden="true" style="display: none;">
+                                                            <div class="modal-dialog modal-dialog-centered">
+                                                                <div class="modal-content">
+                                                                    <div class="modal-header">
+                                                                        <h5 class="modal-title" id="modalToggleLabel2">add notes</h5>
+                                                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                                    </div>
+                                                                    <div class="modal-body"><input type="text"></div>
+                                                                    <div class="modal-footer">
+                                                                        <button>coming soon</button>
+                                                                        <button class="btn btn-primary" data-bs-target="#modalToggle{{apt.id}}" data-bs-toggle="modal" data-bs-dismiss="modal">
+                                                                  view notes
+                                                                </button>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                            {%endfor%}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+<script src="/static/management/assets/vendor/libs/jquery/jquery.js"></script>
+<script src="/static/management/assets/vendor/libs/popper/popper.js"></script>
+<script src="/static/management/assets/vendor/js/bootstrap.js"></script>
+<script src="/static/management/assets/vendor/libs/perfect-scrollbar/perfect-scrollbar.js"></script>
+
+<script src="/static/management/assets/vendor/js/menu.js"></script>
+<!-- endbuild -->
+
+<!-- Vendors JS -->
+<script src="/static/management/assets/vendor/libs/apex-charts/apexcharts.js"></script>
+
+<!-- Main JS -->
+<script src="/static/management/assets/js/main.js"></script>
+
+<!-- Page JS -->
+<script src="/static/management/assets/js/dashboards-analytics.js"></script>
+
+</html>

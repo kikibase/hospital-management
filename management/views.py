@@ -1,5 +1,5 @@
 from django.shortcuts import redirect, render
-from .models import Alloted_Beds, Appointment, Birth_report, Department, Donors, Medicine, Patient,staff_type
+from .models import Alloted_Beds, Appointment, Birth_report, Department, Donors, Medicine, Medicine_log, Patient, Roomlog,staff_type
 from django.contrib.auth import authenticate,login,logout
 from django.contrib.auth.decorators import login_required
 from .forms import NewUserForm
@@ -176,18 +176,23 @@ def logout_user(request):
     #okiki is here
 def dashboard(request):
     if request.user.is_staff:
-        if staff_type.objects.get(user = request.user).type == "R" :
-            dtnw = datetime.now()
-            dt = f"{dtnw.date()}T{dtnw.hour}:{'%02d' % (dtnw.minute)}:00"
-            context = {"available_doctors" : staff_type.objects.filter(type = "D"),"patients" : Patient.objects.all(),"dtnw":dt, "appointments": Appointment.objects.all() }
+        STAFF_OBJ = staff_type.objects.get(user = request.user)
+        dtnw = datetime.now()
+        dt = f"{dtnw.date()}T{dtnw.hour}:{'%02d' % (dtnw.minute)}:00"
+        patobj = Patient.objects.all()
+        aptobj = Appointment.objects.all()
+        pp = staff_type.objects.get(user = request.user).Profile_image.url
+        available_doctors = staff_type.objects.filter(type = "D")
+
+        context = {"available_doctors" : available_doctors,"patients" : patobj,"dtnw":dt, "appointments": aptobj,"pp" : pp }
+        
+        if STAFF_OBJ.type == "R" :
             if request.session.get('_old_post'):
                 context['response'] = request.session.get('_old_post')
                 del request.session['_old_post']
             return render(request, 'management/Pages/dashboard-reception.html', context)
-        elif staff_type.objects.get(user = request.user).type == "N" :
-            dtnw = datetime.now()
-            dt = f"{dtnw.date()}T{dtnw.hour}:{'%02d' % (dtnw.minute)}:00"
-            context = {"available_doctors" : staff_type.objects.filter(type = "D"),"patients" : Patient.objects.all(),"dtnw":dt, "appointments": Appointment.objects.all() }
+        
+        elif STAFF_OBJ.type == "N" :
             return render(request, 'management/Pages/dashboard-nurse.html', context)
     else:
         return redirect(request,"login_page")
@@ -212,3 +217,8 @@ def book_appointment(request):
                 Reason_for_Appointment = request.POST['reason'],
             )
         return redirect(request.POST['backlink'])
+
+def administered(request):
+    if request.user.is_staff:
+        context = {"administered_patient" : Roomlog.objects.filter(checkout_time__isnull = True),"drugs":Medicine_log.objects.all()}
+        return render(request, "management/Pages/administered_patient.html", context)

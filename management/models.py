@@ -73,7 +73,7 @@ class Patient(models.Model):
     Alergies = models.TextField()
 
     def __str__(self):
-        return self.Patient_lastname +" " + self.Patient_firstname + " Details"
+        return f"{self.Patient_lastname} {self.Patient_firstname}"
 
 class Bill(models.Model):
     PAYMENT_STATUS = (
@@ -121,7 +121,15 @@ class Roomlog(models.Model):
     checkout_time = models.DateTimeField(null=True, blank = True)
 
     def __str__(self):
-        return f"Room: {self.Room.ROOM_NUMBER} at {self.Room.ROOM_LOCATION} is logged by {self.Patient.Patient_lastname} {self.Patient.Patient_firstname} between {self.checkin_time} to {(self.checkout_time if self.checkout_time is not None else 'present')} "    
+        return f"Room: {self.Room.Room_NUMBER} at {self.Room.Room_location} is louged by {self.Patient.Patient_lastname} {self.Patient.Patient_firstname} between {self.checkin_time} to {(self.checkout_time if self.checkout_time is not None else 'present')} "    
+
+    def save(self, *args, **kwargs) -> None: #when creating reference, ensure that the refernce is unique
+        try:
+           Alloted_Beds.objects.get(Room = self.Room)
+        except:
+            raise HttpResponseServerError
+
+        super().save(*args, **kwargs)
 
 
 class Medicine(models.Model):
@@ -197,5 +205,11 @@ class Patient_medical_log(models.Model):
     complaint = models.TextField(null=True,blank=True)
 
 class Medicine_log(models.Model):
+    patient = models.ForeignKey(Patient,on_delete=models.PROTECT)
+    administerd_by = models.ForeignKey(User,on_delete=models.PROTECT)
     Medicine = models.ForeignKey(Medicine,on_delete=models.PROTECT)
-    Date_prescribed = models.DateField()
+    room = models.ForeignKey(Room,on_delete=models.PROTECT, null=True)#if atient is staying in the hospital
+    Date_prescribed = models.DateField(auto_created=True)
+    frequency = models.IntegerField()
+    frequency_type = models.CharField(max_length=20, choices=(('daily','daily'),('weekly','weekly'),('hourly','hourly')))
+    more_description = models.TextField()
