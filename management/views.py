@@ -52,6 +52,13 @@ def dashboard(request):
         
         elif STAFF_OBJ.type == "N" :
             return render(request, 'management/Pages/dashboard-nurse.html', context)
+        
+        elif STAFF_OBJ.type == "D" :
+            return render(request, 'management/Pages/dashboard-doc.html', context)
+
+        elif STAFF_OBJ.type == "P" :
+            return render(request, 'management/Pages/dashboard-pharmacy.html', context)
+
     else:
         return redirect(request,"login_page")
 
@@ -80,6 +87,25 @@ def administered(request):
     if request.user.is_staff:
         context = {"administered_patient" : Roomlog.objects.filter(checkout_time__isnull = True),"drugs":Medicine_log.objects.all()}
         return render(request, "management/Pages/administered_patient.html", context)
+
+
+def patient_info(request):
+    if request.user.is_staff:
+        if request.method == 'POST':
+            context = {"search_result" : Patient.objects.filter(Patient_firstname__contains = request.POST['search'],Patient_lastname__contains = request.POST['search'],Patient_email_address__contains = request.POST['search'] )}
+            return render(request, "management/Pages/patient_info.html", context)
+        else:
+            context = {"search_result": Patient.objects.all()}
+            return render(request, "management/Pages/patient_info.html", context)
+
+
+
+
+
+
+
+
+        
 
 def logout_user(request):
     logout(request)
