@@ -1,7 +1,6 @@
 from django.shortcuts import redirect, render
 from .models import Alloted_Beds, Appointment, Birth_report, Department, Donors, Medicine, Medicine_log, Patient, Roomlog,staff_type
 from django.contrib.auth import authenticate,login,logout
-from django.contrib.auth.decorators import login_required
 from .forms import NewUserForm
 from datetime import datetime
 from django.contrib.auth.models import User
