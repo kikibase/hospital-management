@@ -208,7 +208,7 @@ class Medicine_log(models.Model):
     patient = models.ForeignKey(Patient,on_delete=models.PROTECT)
     administerd_by = models.ForeignKey(User,on_delete=models.PROTECT)
     Medicine = models.ForeignKey(Medicine,on_delete=models.PROTECT)
-    room = models.ForeignKey(Room,on_delete=models.PROTECT, null=True)#if atient is staying in the hospital
+    room = models.ForeignKey(Room,on_delete=models.PROTECT, null=True)#if patient is staying in the hospital
     Date_prescribed = models.DateField(auto_created=True)
     frequency = models.IntegerField()
     frequency_type = models.CharField(max_length=20, choices=(('daily','daily'),('weekly','weekly'),('hourly','hourly')))
