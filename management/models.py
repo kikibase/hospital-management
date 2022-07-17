@@ -68,7 +68,7 @@ class Patient(models.Model):
     Patient_address = models.CharField(max_length=350,null=True,blank=True)
     Patient_blood_group = models.CharField(max_length=200)
     Patient_blood_genotype = models.CharField(max_length=200)
-    Patient_age = models.IntegerField()
+    DOB = models.DateField()
     Patient_gender = models.CharField(max_length=25, choices=GENDER,default="UNDECIDED")
     Alergies = models.TextField()
 
@@ -134,6 +134,7 @@ class Roomlog(models.Model):
 
 class Medicine(models.Model):
     name = models.CharField(max_length=250)
+    size = models.IntegerField()#in milligrams
     quantity_available = models.IntegerField()
     nafdac_no = models.CharField(max_length=200)
     last_updated = models.DateTimeField(auto_now_add=True)
@@ -173,7 +174,7 @@ class Operation(models.Model):
         return self.patient.Patient_lastname + self.patient.Patient_firstname + " Operation Details"
 
     def save(self, *args, **kwargs) -> None: #when creating reference, ensure that the refernce is unique
-        S = staff_type.objects.get(user = self.Assigned_doctor)
+        S = staff_type.objects.get(user = self.doctor)
         if S != "D":
             raise HttpResponseServerError
 
@@ -191,7 +192,7 @@ class Birth_report(models.Model):
         return self.patient.Patient_lastname + self.patient.Patient_firstname + " Birth Report"
 
     def save(self, *args, **kwargs) -> None: #when creating reference, ensure that the refernce is unique
-        S = staff_type.objects.get(user = self.Assigned_doctor)
+        S = staff_type.objects.get(user = self.doctor)
         if S != "D":
             raise HttpResponseServerError
 
@@ -199,10 +200,19 @@ class Birth_report(models.Model):
 
 class Patient_medical_log(models.Model):
     patient = models.ForeignKey(Patient, on_delete=models.PROTECT)
+    treated_by = models.ForeignKey(User,on_delete=models.PROTECT)
     diagnosis = models.TextField(null=True,blank=True)
     temperature = models.IntegerField(null=True,blank=True)
     blood_pressure = models.IntegerField(null=True,blank=True)
     complaint = models.TextField(null=True,blank=True)
+    more_info = models.TextField(null=True,blank=True)
+    date = models.DateTimeField(auto_created=True)
+
+    def save(self, *args, **kwargs) -> None: #when creating reference, ensure that the refernce is unique
+        S = staff_type.objects.get(user = self.treated_by)
+        if S != "D":
+            raise HttpResponseServerError
+        super().save(*args, **kwargs)
 
 class Medicine_log(models.Model):
     patient = models.ForeignKey(Patient,on_delete=models.PROTECT)
@@ -213,3 +223,4 @@ class Medicine_log(models.Model):
     frequency = models.IntegerField()
     frequency_type = models.CharField(max_length=20, choices=(('daily','daily'),('weekly','weekly'),('hourly','hourly')))
     more_description = models.TextField()
+    collected = models.BooleanField()

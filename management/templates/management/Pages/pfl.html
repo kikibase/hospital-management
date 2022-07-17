@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="en" class="light-style layout-menu-fixed" dir="ltr" data-theme="theme-default" data-assets-path="/static/management/assets/" data-template="vertical-menu-template-free">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0" />
+
+    <title>Patient info</title>
+
+    <meta name="description" content="" />
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="/static/management/assets/img/favicon/favicon.ico" />
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Public+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500;1,600;1,700&display=swap" rel="stylesheet" />
+
+    <!-- Icons. Uncomment required icon fonts -->
+    <link rel="stylesheet" href="/static/management/assets/vendor/fonts/boxicons.css" />
+
+    <!-- Core CSS -->
+    <link rel="stylesheet" href="/static/management/assets/vendor/css/core.css" class="template-customizer-core-css" />
+    <link rel="stylesheet" href="/static/management/assets/vendor/css/theme-default.css" class="template-customizer-theme-css" />
+    <link rel="stylesheet" href="/static/management/assets/css/demo.css" />
+
+    <!-- Vendors CSS -->
+    <link rel="stylesheet" href="/static/management/assets/vendor/libs/perfect-scrollbar/perfect-scrollbar.css" />
+
+    <link rel="stylesheet" href="/static/management/assets/vendor/libs/apex-charts/apex-charts.css" />
+
+    <!-- Page CSS -->
+
+    <!-- Helpers -->
+    <script src="/static/management/assets/vendor/js/helpers.js"></script>
+
+    <!--! Template customizer & Theme config files MUST be included after core stylesheets and helpers.js in the <head> section -->
+    <!--? Config:  Mandatory theme config file contain global vars & default theme options, Set your preferred theme option in this file.  -->
+    <script src="/static/management/assets/js/config.js"></script>
+</head>
+
+<body>
+    <!-- Layout wrapper -->
+    <div class="layout-wrapper layout-content-navbar">
+        <div class="layout-container">
+            {% include 'management/Components/sidebarnew.html' %}
+            <!-- Layout container -->
+            <div class="layout-page">
+                {% include 'management/components/header.html' %}
+
+                <!-- Content wrapper -->
+                <div class="content-wrapper">
+                    <div class="container-xxl flex-grow-1 container-p-y">
+                        <h5 class="pb-1 mb-4">Patient info for {{pt.Patient_lastname}} {{pt.Patient_firstname}} </h5>
+                        <!-- Content -->
+                        <div class="row mb-5">
+                            <div class="col-md-6 col-lg-4">
+                                <div class="card mb-3">
+                                    <div class="card-body">
+                                        <h5 class="card-title">medical history</h5>
+                                        <p class="card-text">With supporting text below as a natural lead-in to additional content.</p>
+                                        <button class="btn btn-primary" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasBottom" aria-controls="offcanvasBottom">
+                                            view
+                                          </button>
+                                        <div class="offcanvas offcanvas-bottom" tabindex="-1" id="offcanvasBottom" aria-labelledby="offcanvasBottomLabel" aria-hidden="true" style="visibility: hidden;">
+                                            <div class="offcanvas-header">
+                                                <h5 id="offcanvasBottomLabel" class="offcanvas-title">Medic History</h5>
+                                                <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+                                            </div>
+                                            <div class="offcanvas-body">
+                                                <div class="table-responsive text-nowrap">
+                                                    <table class="table card-table">
+                                                        <thead>
+                                                            <tr>
+                                                                <th>Diagnosis</th>
+                                                                <th>vitals</th>
+                                                                <th>Complaint</th>
+                                                                <th>Doctors note/more info</th>
+                                                                <th>diagnosed by</th>
+                                                                <th>date</th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody class="table-border-bottom-0">
+                                                            {% for ptlog in ptlogs %}
+                                                            <tr>
+                                                                <td><i class="fab fa-angular fa-lg text-danger me-3"></i> <strong> {{ptlog.diagnosis}} </strong></td>
+                                                                <td>{{ptlog.temperature}}°C {{ptlog.blood_pressure}}DIA</td>
+                                                                <td> {{ptlog.complaint}} </td>
+                                                                <td>{{ptlog.more_info}}</td>
+                                                                <td>Doc. {{ptlog.treated_by.last_name}} {{ptlog.treated_by.first_name}}</td>
+                                                                <td>{{ptlog.date}}</td>
+                                                            </tr>
+                                                            {%endfor%}
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6 col-lg-4">
+                                <div class="card text-center mb-3">
+                                    <div class="card-body">
+                                        <h5 class="card-title">Current Diagnosis</h5>
+                                        <p class="card-text">With supporting text below as a natural lead-in to additional content.</p>
+                                        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#fullscreenModal">
+                                              Launch modal
+                                            </button>
+
+                                        <!-- Modal -->
+                                        <div class="modal fade" id="fullscreenModal" tabindex="-1" aria-hidden="true" style="display: none;">
+                                            <div class="modal-dialog modal-fullscreen" role="document">
+                                                <div class="modal-content">
+                                                    <div class="modal-header">
+                                                        <h5 class="modal-title" id="modalFullTitle">Modal title</h5>
+                                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                    </div>
+                                                    <div class="modal-body">
+                                                        <div class="row">
+                                                            <div class="col-xl">
+                                                                <div class="card mb-4">
+                                                                    <div class="card-header d-flex justify-content-between align-items-center">
+                                                                        <h5 class="mb-0">Diagnosis</h5>
+                                                                        <small class="text-muted float-end">Add Diagnosis info</small>
+                                                                    </div>
+                                                                    <div class="card-body">
+                                                                        <form>
+                                                                            <div class="mb-3">
+                                                                                <label class="form-label" for="diagnosis">Diagnosis</label>
+                                                                                <textarea type="text" name="diagnosis" class="form-control" id="diagnosis" placeholder="Diagnosis"></textarea>
+                                                                            </div>
+                                                                            <div class="mb-3">
+                                                                                <label class="form-label" for="temperature">Temperature</label>
+                                                                                <input type="text" name="temperature" class="form-control" id="temperature" placeholder="temperature">
+                                                                            </div>
+                                                                            <div class="mb-3">
+                                                                                <label class="form-label" for="blood_pressure">Blood pressure</label>
+                                                                                <input type="text" name="blood_pressure" class="form-control" id="blood_pressure" placeholder="blood_pressure">
+                                                                            </div>
+                                                                            <div class="mb-3">
+                                                                                <label class="form-label" for="complaint">complaint</label>
+                                                                                <textarea type="text" name="complaint" class="form-control" id="complaint" placeholder="complaint"></textarea>
+                                                                            </div>
+                                                                            <div class="mb-3">
+                                                                                <label class="form-label" for="extra-more-info">extra-more-info</label>
+                                                                                <textarea type="text" name="extra-more-info" class="form-control" id="extra-more-info" placeholder="extra-more-info"></textarea>
+                                                                            </div>
+                                                                            <button type="submit" class="btn btn-primary">Send</button>
+                                                                        </form>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-xl">
+                                                                <div class="card mb-4">
+                                                                    <div class="card-header d-flex justify-content-between align-items-center">
+                                                                        <h5 class="mb-0">Administer med</h5>
+                                                                        <small class="text-muted float-end"></small>
+                                                                    </div>
+                                                                    <div class="card-body">
+                                                                        <form>
+                                                                            <div class="mb-3">
+                                                                                <label for="exampleFormControlSelect1" class="form-label">Select drug</label>
+                                                                                <select name="med" class="form-select" id="exampleFormControlSelect1" aria-label="Default select example">
+                                                                                  <option selected="">Open this select menu</option>
+                                                                                  {% for med in dr %}
+                                                                                  <option value="{{med.id}}">{{med.name}}</option>
+                                                                                  {%endfor%}
+                                                                                </select>
+                                                                            </div>
+                                                                            <div class="mb-3">
+                                                                                <label for="room" class="form-label">select room</label>
+                                                                                <select name="med" class="form-select" id="room" aria-label="Default select example">
+                                                                                  <option selected="">Leave blank if patient is not staying in a room</option>
+                                                                                  {% for room in rm %}
+                                                                                  <option value="{{room.id}}">{{room.name}}</option>
+                                                                                  {%endfor%}
+                                                                                </select>
+                                                                            </div>
+                                                                            <div class="mb-3">
+                                                                                <label class="form-label" for="frequency">frequency</label>
+                                                                                <div class="textarea-group textarea-group-merge">
+                                                                                    <input type="text" id="frequency" class="form-control" placeholder="frequency" aria-label="john.doe" aria-describedby="basic-default-email2">
+                                                                                    <span class="textarea-group-text" id="basic-default-email2">frequency</span>
+                                                                                    <label for="room" class="form-label">select room</label>
+                                                                                    <select name="med" class="form-select" id="room" aria-label="Default select example">
+                                                                                      <option selected="">Leave blank if patient is not staying in a room</option>
+                                                                                      <option value="weekly">weekly</option>
+                                                                                      <option value="daily">daily</option>
+                                                                                    </select>
+                                                                                </div>
+                                                                                <div class="form-text">You can use letters, numbers &amp; periods</div>
+                                                                            </div>
+                                                                            <div class="mb-3">
+                                                                                <label class="form-label" for="basic-default-phone">Phone No</label>
+                                                                                <textarea type="text" id="basic-default-phone" class="form-control phone-mask" placeholder="658 799 8941"></textarea>
+                                                                            </div>
+                                                                            <div class="mb-3">
+                                                                                <label class="form-label" for="basic-default-message">Message</label>
+                                                                                <textarea id="basic-default-message" class="form-control" placeholder="Hi, Do you have a moment to talk Joe?"></textarea>
+                                                                            </div>
+                                                                            <button type="submit" class="btn btn-primary">Send</button>
+                                                                        </form>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="modal-footer">
+                                                        <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Close</button>
+                                                        <button type="button" class="btn btn-primary">Save changes</button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6 col-lg-4">
+                            <div class="card text-end mb-3">
+                                <div class="card-body">
+                                    <h5 class="card-title">Medication history</h5>
+                                    <p class="card-text">With supporting text below as a natural lead-in to additional content.</p>
+                                    <button class="btn btn-primary" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasBottom1" aria-controls="offcanvasBottom">
+                                            view
+                                          </button>
+                                    <div class="offcanvas offcanvas-bottom" tabindex="-1" id="offcanvasBottom1" aria-labelledby="offcanvasBottomLabel" aria-hidden="true" style="visibility: hidden;">
+                                        <div class="offcanvas-header">
+                                            <h5 id="offcanvasBottomLabel" class="offcanvas-title">Drug History</h5>
+                                            <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+                                        </div>
+                                        <div class="offcanvas-body">
+                                            <div class="table-responsive text-nowrap">
+                                                <table class="table card-table">
+                                                    <thead>
+                                                        <tr>
+                                                            <th>Name</th>
+                                                            <th>size(mg)</th>
+                                                            <th>prescribed by</th>
+                                                            <th>frequency</th>
+                                                            <th>more info</th>
+                                                            <th>date</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody class="table-border-bottom-0">
+                                                        {% for drlog in drlogs %}
+                                                        <tr>
+                                                            <td><i class="fab fa-angular fa-lg text-danger me-3"></i> <strong> {{drlog.Medicine.name}} </strong></td>
+                                                            <td>{{drlog.Medicine.size}} Mg</td>
+                                                            <td>Doc. {{drlog.administered_by.last_name}} {{drlog.administered_by.first_name}} </td>
+                                                            <td>{{drlog.frequency}} {{drlog.frequency_type}}</td>
+                                                            <td>{{drlog.more_description}}</td>
+                                                            <td>{{drlog.Date_prescribed}}</td>
+                                                        </tr>
+                                                        {%endfor%}
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    </div>
+</body>
+<script src="/static/management/assets/vendor/libs/jquery/jquery.js"></script>
+<script src="/static/management/assets/vendor/libs/popper/popper.js"></script>
+<script src="/static/management/assets/vendor/js/bootstrap.js"></script>
+<script src="/static/management/assets/vendor/libs/perfect-scrollbar/perfect-scrollbar.js"></script>
+
+<script src="/static/management/assets/vendor/js/menu.js"></script>
+<!-- endbuild -->
+
+<!-- Vendors JS -->
+<script src="/static/management/assets/vendor/libs/apex-charts/apexcharts.js"></script>
+
+<!-- Main JS -->
+<script src="/static/management/assets/js/main.js"></script>
+
+<!-- Page JS -->
+<script src="/static/management/assets/js/dashboards-analytics.js"></script>
+
+</html>

@@ -76,10 +76,10 @@
                                                 <td>{{apt.Room.Room_NUMBER}}</td>
                                                 <td>{{apt.Bed.Bed_number}}</td>
                                                 <td class="mt-3">
-                                                    <button class="btn btn-primary" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasBottom" aria-controls="offcanvasBottom">
+                                                    <button class="btn btn-primary" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasBottom{{apt.id}}" aria-controls="offcanvasBottom">
                                                       view
                                                     </button>
-                                                    <div class="offcanvas offcanvas-bottom" tabindex="-1" id="offcanvasBottom" aria-labelledby="offcanvasBottomLabel" aria-hidden="true" style="visibility: hidden;">
+                                                    <div class="offcanvas offcanvas-bottom" tabindex="-1" id="offcanvasBottom{{apt.id}}" aria-labelledby="offcanvasBottomLabel" aria-hidden="true" style="visibility: hidden;">
                                                         <div class="offcanvas-header">
                                                             <h5 id="offcanvasBottomLabel" class="offcanvas-title">Prescribed medication for {{apt.Patient}}</h5>
                                                             <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>

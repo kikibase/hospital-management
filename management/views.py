@@ -1,5 +1,6 @@
+from django.http import Http404
 from django.shortcuts import redirect, render
-from .models import Alloted_Beds, Appointment, Birth_report, Department, Donors, Medicine, Medicine_log, Patient, Roomlog,staff_type
+from .models import Appointment, Medicine, Medicine_log, Patient, Patient_medical_log, Room, Roomlog,staff_type
 from django.contrib.auth import authenticate,login,logout
 from .forms import NewUserForm
 from datetime import datetime
@@ -8,15 +9,34 @@ from django.contrib.auth.models import User
 
 
 #This view is responsible for loging the user into the management system 
-def welcome_page(request):
+def login_page(request):
+    if request.user.is_authenticated:
+        return redirect('dashboard')
+    else:
+        sesslog = request.session.get('login-error')
+        if sesslog:
+            context = {"loginerr" : sesslog}
+            del request.session['login-error']
+            return render(request,'management/Pages/login_page.html', context)
+        return render(request,'management/Pages/login_page.html')
+
+def login_l(request):
     if request.method == 'POST':
-       username = request.POST['username']
-       password = request.POST['password']
-       user = authenticate(request,username=username,password=password)
-       if user is not None:
-           login(request,user)
-           return redirect('dashboard')
-    return render(request,'management/Pages/login_page.html')
+        if request.POST['email-username'].find('@') >= 0:
+            username = User.objects.get(email = request.POST['email-username']).username
+            password = request.POST['password']
+        else:
+            username = request.POST['email-username']
+            password = request.POST['password']
+        user = authenticate(request,username=username,password=password)
+        if user is not None:
+            login(request, user)
+            return redirect('dashboard')
+        else:
+            request.session['login-error'] = 'username/email or password is wrong'
+            return redirect('login_page')
+    else:
+        raise Http404
 
 # This view is responsible for creating a new user instance
 def sign_up_page(request):
@@ -85,21 +105,49 @@ def book_appointment(request):
 
 def administered(request):
     if request.user.is_staff:
-        context = {"administered_patient" : Roomlog.objects.filter(checkout_time__isnull = True),"drugs":Medicine_log.objects.all()}
+        context = {"administered_patient" : Roomlog.objects.filter(checkout_time__isnull = True),"drugs":Medicine_log.objects.filter(room__isnull = False)}
         return render(request, "management/Pages/administered_patient.html", context)
 
 
 def patient_info(request):
     if request.user.is_staff:
         if request.method == 'POST':
-            context = {"search_result" : Patient.objects.filter(Patient_firstname__contains = request.POST['search'],Patient_lastname__contains = request.POST['search'],Patient_email_address__contains = request.POST['search'] )}
+            cont = []
+            for val in Patient.objects.filter(Patient_firstname__contains = request.POST['search']):
+                cont.append(val)
+            for val in Patient.objects.filter(Patient_lastname__contains = request.POST['search']):
+                if cont.count(val)<=1:
+                    cont.append(val)
+            for val in Patient.objects.filter(Patient_email_address__contains = request.POST['search']):
+                if cont.count(val)<=1:
+                    cont.append(val)
+            for val in Patient.objects.filter(Patient_phone_number__contains = request.POST['search']):
+                if cont.count(val)<=1:
+                    cont.append(val)
+            
+            context = {"search_result" : cont }
             return render(request, "management/Pages/patient_info.html", context)
         else:
             context = {"search_result": Patient.objects.all()}
             return render(request, "management/Pages/patient_info.html", context)
 
 
+def patient_full_info(request,pk):
+    if request.user.is_staff:
+        rmfil =[]
+        for s in Room.objects.all():
+            rmfil.append(s)
+        for d in Roomlog.objects.filter(checkout_time__isnull = True):
+            rmfil.remove(d)
 
+        context = {
+            'pt' : Patient.objects.get(id = pk),
+            'ptlogs':Patient_medical_log.objects.filter(patient_id = pk ),
+            'drlogs' : Medicine_log.objects.filter(patient_id = pk),
+            'dr': Medicine.objects.all(),
+            'rm' : rmfil
+            }
+        return render(request, "management/Pages/pfl.html", context )
 
 
 

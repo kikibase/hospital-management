@@ -64,8 +64,8 @@
                                                 <th>First name</th>
                                                 <th>Last name</th>
                                                 <th>email</th>
-                                                <th>number</th>
-                                                <th>age</th>
+                                                <th>Phone number</th>
+                                                <th>DOB</th>
                                                 <th>gender</th>
                                                 <th>view full-info</th>
                                             </tr>
@@ -76,92 +76,10 @@
                                                 <td><i class="fab fa-angular fa-lg text-danger me-3"></i> {{sr.Patient_firstname}}</td>
                                                 <td>{{sr.Patient_lastname}}</td>
                                                 <td>{{sr.Patient_email_address}}</td>
-                                                <td>
-                                                    <button class="btn btn-primary" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasBottom" aria-controls="offcanvasBottom">
-                                                      view
-                                                    </button>
-                                                    <div class="offcanvas offcanvas-bottom" tabindex="-1" id="offcanvasBottom" aria-labelledby="offcanvasBottomLabel" aria-hidden="true" style="visibility: hidden;">
-                                                        <div class="offcanvas-header">
-                                                            <h5 id="offcanvasBottomLabel" class="offcanvas-title">Prescribed medication for {{apt.Patient}}</h5>
-                                                            <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
-                                                        </div>
-                                                        <div class="offcanvas-body">
-                                                            <div class="card">
-                                                                <div class="table-responsive text-nowrap">
-                                                                    <table class="table table-borderless">
-                                                                        <thead>
-                                                                            <tr>
-                                                                                <th>med name</th>
-                                                                                <th>Administered by</th>
-                                                                                <th>Date prescribed</th>
-                                                                                <th>frequency</th>
-                                                                                <th>Decription</th>
-                                                                            </tr>
-                                                                        </thead>
-                                                                        <tbody>
-                                                                            {% for drug in drugs %} {% if drug.room == apt.Room %}
-                                                                            <tr>
-                                                                                <td><i class="fab fa-angular fa-lg text-danger me-3"></i> <strong> {{drug.Medicine.name}} </strong></td>
-                                                                                <td>DR. {{drug.administerd_by.first_name}} {{drug.administerd_by.last_name}}</td>
-                                                                                <td>{{drug.Date_prescribed}}</td>
-                                                                                <td><span class="badge bg-label-primary me-1">{{drug.frequency}} {{drug.frequency_type}}</span></td>
-                                                                                <td>{{drug.more_description}}</td>
-                                                                            </tr>
-                                                                            {%endif%} {%endfor%}
-                                                                        </tbody>
-                                                                    </table>
-                                                                </div>
-                                                            </div>
-                                                            <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="offcanvas">
-                                                          Cancel
-                                                        </button>
-                                                        </div>
-                                                    </div>
-                                                </td>
-                                                <td>{{apt.checkin_time}}</td>
-                                                <td>
-                                                    <div class="mt-3">
-                                                        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalToggle{{apt.id}}">
-                                                          edit/add
-                                                        </button>
-
-                                                        <!-- Modal 1-->
-                                                        <div class="modal fade" id="modalToggle{{apt.id}}" aria-labelledby="modalToggleLabel" tabindex="-1" style="display: none;" aria-hidden="true">
-                                                            <div class="modal-dialog modal-dialog-centered">
-                                                                <div class="modal-content">
-                                                                    <div class="modal-header">
-                                                                        <h5 class="modal-title" id="modalToggleLabel">viewing notes</h5>
-                                                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                                                    </div>
-                                                                    <div class="modal-body">coming soon</div>
-                                                                    <div class="modal-footer">
-                                                                        <button class="btn btn-primary" data-bs-target="#modalTogglea{{apt.id}}" data-bs-toggle="modal" data-bs-dismiss="modal">
-                                                                  add notes
-                                                                </button>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                        <!-- Modal 2-->
-                                                        <div class="modal fade" id="modalTogglea{{apt.id}}" aria-labelledby="modalToggleLabel2" tabindex="-1" aria-hidden="true" style="display: none;">
-                                                            <div class="modal-dialog modal-dialog-centered">
-                                                                <div class="modal-content">
-                                                                    <div class="modal-header">
-                                                                        <h5 class="modal-title" id="modalToggleLabel2">add notes</h5>
-                                                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                                                    </div>
-                                                                    <div class="modal-body"><input type="text"></div>
-                                                                    <div class="modal-footer">
-                                                                        <button>coming soon</button>
-                                                                        <button class="btn btn-primary" data-bs-target="#modalToggle{{apt.id}}" data-bs-toggle="modal" data-bs-dismiss="modal">
-                                                                  view notes
-                                                                </button>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </td>
+                                                <td>{{sr.Patient_phone_number}}</td>
+                                                <td>{{sr.DOB}}</td>
+                                                <td>{{sr.Patient_gender}}</td>
+                                                <td> <a href="/management/p-f-l/{{sr.id}}"><button class="btn btn-outline-info">view</button></a> </td>
                                             </tr>
                                             {%endfor%}
                                         </tbody>

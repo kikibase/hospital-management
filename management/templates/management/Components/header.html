@@ -18,7 +18,10 @@
         <div class="navbar-nav align-items-center">
             <div class="nav-item d-flex align-items-center">
                 <i class="bx bx-search fs-4 lh-0"></i>
-                <input type="text" class="form-control border-0 shadow-none" placeholder="Search...." aria-label="Search....." />
+                <form action="/management/patient_info/" method="post">
+                    {%csrf_token%}
+                    <input type="text" name="search" class="form-control border-0 shadow-none" placeholder="Search...." aria-label="Search....." />
+                </form>
             </div>
         </div>
         <!-- /Search -->
@@ -42,7 +45,7 @@
                                 </div>
                                 <div class="flex-grow-1">
                                     <span class="fw-semibold d-block">{{request.user.last_name}} {{request.user.first_name}}</span>
-                                    <small class="text-muted">Admin</small>
+                                    <small class="text-muted">put staff job here</small>
                                 </div>
                             </div>
                         </a>
@@ -75,7 +78,7 @@
                         <div class="dropdown-divider"></div>
                     </li>
                     <li>
-                        <a class="dropdown-item" href="auth-login-basic.html">
+                        <a class="dropdown-item" href="/management/logout">
                             <i class="bx bx-power-off me-2"></i>
                             <span class="align-middle">Log Out</span>
                         </a>
