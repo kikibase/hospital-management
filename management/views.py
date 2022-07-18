@@ -135,17 +135,20 @@ def patient_info(request):
 def patient_full_info(request,pk):
     if request.user.is_staff:
         rmfil =[]
+        bdfil = []
         for s in Room.objects.all():
             rmfil.append(s)
         for d in Roomlog.objects.filter(checkout_time__isnull = True):
             rmfil.remove(d)
+
 
         context = {
             'pt' : Patient.objects.get(id = pk),
             'ptlogs':Patient_medical_log.objects.filter(patient_id = pk ),
             'drlogs' : Medicine_log.objects.filter(patient_id = pk),
             'dr': Medicine.objects.all(),
-            'rm' : rmfil
+            'rm' : rmfil,
+            'rmbd':bdfil
             }
         return render(request, "management/Pages/pfl.html", context )
 

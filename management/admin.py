@@ -5,7 +5,6 @@ from .models import *
 admin.site.register(Department)
 admin.site.register(Patient)
 admin.site.register(Room)
-admin.site.register(Alloted_Beds)
 admin.site.register(Medicine)
 admin.site.register(Donors)
 admin.site.register(Birth_report)

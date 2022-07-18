@@ -46,6 +46,7 @@ class Department(models.Model):
 class Room(models.Model):
     Room_location = models.CharField(max_length=250, null=True,blank=True)
     Room_NUMBER = models.CharField(max_length=100, null=True, blank=True, unique=True)
+    Avaialble_beds = models.IntegerField()
     
 
 
@@ -106,30 +107,24 @@ class Appointment(models.Model):
 
         super().save(*args, **kwargs)
 
-    
-
-class Alloted_Beds(models.Model):
-    Room = models.ForeignKey(Room,on_delete=models.CASCADE,null=True, blank=True)
-    Bed_number = models.IntegerField()
-
 
 class Roomlog(models.Model):
     Room=models.ForeignKey(Room,on_delete=models.PROTECT)
-    Bed = models.ForeignKey(Alloted_Beds, on_delete=models.PROTECT)
+    Bed = models.IntegerField()
     Patient = models.ForeignKey(Patient, on_delete=models.PROTECT)
-    checkin_time = models.DateTimeField()
+    checkin_time = models.DateTimeField(auto_created=True)
     checkout_time = models.DateTimeField(null=True, blank = True)
 
     def __str__(self):
         return f"Room: {self.Room.Room_NUMBER} at {self.Room.Room_location} is louged by {self.Patient.Patient_lastname} {self.Patient.Patient_firstname} between {self.checkin_time} to {(self.checkout_time if self.checkout_time is not None else 'present')} "    
 
     def save(self, *args, **kwargs) -> None: #when creating reference, ensure that the refernce is unique
-        try:
-           Alloted_Beds.objects.get(Room = self.Room)
-        except:
-            raise HttpResponseServerError
+        if self.Bed <= self.Room.Available_beds:
+            super().save(*args, **kwargs)
+        else:
+            raise HttpResponseServerError('bed is above available bed space')
 
-        super().save(*args, **kwargs)
+        
 
 
 class Medicine(models.Model):

@@ -126,7 +126,8 @@
                                                                         <small class="text-muted float-end">Add Diagnosis info</small>
                                                                     </div>
                                                                     <div class="card-body">
-                                                                        <form>
+                                                                        <form method="post">
+                                                                            {%csrf_token%}
                                                                             <div class="mb-3">
                                                                                 <label class="form-label" for="diagnosis">Diagnosis</label>
                                                                                 <textarea type="text" name="diagnosis" class="form-control" id="diagnosis" placeholder="Diagnosis"></textarea>
@@ -171,33 +172,26 @@
                                                                             </div>
                                                                             <div class="mb-3">
                                                                                 <label for="room" class="form-label">select room</label>
-                                                                                <select name="med" class="form-select" id="room" aria-label="Default select example">
+                                                                                <select name="room" class="form-select" id="room" aria-label="Default select example">
                                                                                   <option selected="">Leave blank if patient is not staying in a room</option>
                                                                                   {% for room in rm %}
-                                                                                  <option value="{{room.id}}">{{room.name}}</option>
+                                                                                  <option value="{{room.id}}">room: {{room.id}}</option>
                                                                                   {%endfor%}
                                                                                 </select>
                                                                             </div>
                                                                             <div class="mb-3">
                                                                                 <label class="form-label" for="frequency">frequency</label>
-                                                                                <div class="textarea-group textarea-group-merge">
+                                                                                <div class="textarea-group row textarea-group-merge">
                                                                                     <input type="text" id="frequency" class="form-control" placeholder="frequency" aria-label="john.doe" aria-describedby="basic-default-email2">
-                                                                                    <span class="textarea-group-text" id="basic-default-email2">frequency</span>
-                                                                                    <label for="room" class="form-label">select room</label>
-                                                                                    <select name="med" class="form-select" id="room" aria-label="Default select example">
-                                                                                      <option selected="">Leave blank if patient is not staying in a room</option>
-                                                                                      <option value="weekly">weekly</option>
+                                                                                    <label for="room" class="form-label"></label>
+                                                                                    <select name="frequency" class="form-select" id="room" aria-label="Default select example">
                                                                                       <option value="daily">daily</option>
+                                                                                      <option value="weekly">weekly</option>
                                                                                     </select>
                                                                                 </div>
-                                                                                <div class="form-text">You can use letters, numbers &amp; periods</div>
                                                                             </div>
                                                                             <div class="mb-3">
-                                                                                <label class="form-label" for="basic-default-phone">Phone No</label>
-                                                                                <textarea type="text" id="basic-default-phone" class="form-control phone-mask" placeholder="658 799 8941"></textarea>
-                                                                            </div>
-                                                                            <div class="mb-3">
-                                                                                <label class="form-label" for="basic-default-message">Message</label>
+                                                                                <label class="form-label" for="basic-default-message">More description</label>
                                                                                 <textarea id="basic-default-message" class="form-control" placeholder="Hi, Do you have a moment to talk Joe?"></textarea>
                                                                             </div>
                                                                             <button type="submit" class="btn btn-primary">Send</button>
@@ -217,47 +211,111 @@
                                     </div>
                                 </div>
                             </div>
-                        </div>
+                            <div class="col-md-6 col-lg-4">
+                                <div class="card text-center mb-3">
+                                    <div class="card-body">
+                                        <h5 class="card-title">give room(subject to cange)</h5>
+                                        <p class="card-text">Book room for patient.</p>
+                                        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#fullscreenModal">
+                                              Launch modal
+                                            </button>
 
-                        <div class="col-md-6 col-lg-4">
-                            <div class="card text-end mb-3">
-                                <div class="card-body">
-                                    <h5 class="card-title">Medication history</h5>
-                                    <p class="card-text">With supporting text below as a natural lead-in to additional content.</p>
-                                    <button class="btn btn-primary" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasBottom1" aria-controls="offcanvasBottom">
+                                        <!-- Modal -->
+                                        <div class="modal fade" id="fullscreenModal1" tabindex="-1" aria-hidden="true" style="display: none;">
+                                            <div class="modal-dialog modal-fullscreen" role="document">
+                                                <div class="modal-content">
+                                                    <div class="modal-header">
+                                                        <h5 class="modal-title" id="modalFullTitle1">Book room</h5>
+                                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                    </div>
+                                                    <div class="modal-body">
+                                                        <div class="row">
+                                                            <div class="col-xl">
+                                                                <div class="card mb-4">
+                                                                    <div class="card-header d-flex justify-content-between align-items-center">
+                                                                        <h5 class="mb-0">room</h5>
+                                                                        <small class="text-muted float-end">Book</small>
+                                                                    </div>
+                                                                    <div class="card-body">
+                                                                        <form method="post">
+                                                                            {%csrf_token%}
+                                                                            <div class="mb-3">
+                                                                                <label class="form-label" for="diagnosis">Diagnosis</label>
+                                                                                <textarea type="text" name="diagnosis" class="form-control" id="diagnosis" placeholder="Diagnosis"></textarea>
+                                                                            </div>
+                                                                            <div class="mb-3">
+                                                                                <label class="form-label" for="temperature">Temperature</label>
+                                                                                <input type="text" name="temperature" class="form-control" id="temperature" placeholder="temperature">
+                                                                            </div>
+                                                                            <div class="mb-3">
+                                                                                <label class="form-label" for="blood_pressure">Blood pressure</label>
+                                                                                <input type="text" name="blood_pressure" class="form-control" id="blood_pressure" placeholder="blood_pressure">
+                                                                            </div>
+                                                                            <div class="mb-3">
+                                                                                <label class="form-label" for="complaint">complaint</label>
+                                                                                <textarea type="text" name="complaint" class="form-control" id="complaint" placeholder="complaint"></textarea>
+                                                                            </div>
+                                                                            <div class="mb-3">
+                                                                                <label class="form-label" for="extra-more-info">extra-more-info</label>
+                                                                                <textarea type="text" name="extra-more-info" class="form-control" id="extra-more-info" placeholder="extra-more-info"></textarea>
+                                                                            </div>
+                                                                            <button type="submit" class="btn btn-primary">Send</button>
+                                                                        </form>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="modal-footer">
+                                                        <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Close</button>
+                                                        <button type="button" class="btn btn-primary">Save changes</button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6 col-lg-4">
+                                <div class="card text-end mb-3">
+                                    <div class="card-body">
+                                        <h5 class="card-title">Medication history</h5>
+                                        <p class="card-text">With supporting text below as a natural lead-in to additional content.</p>
+                                        <button class="btn btn-primary" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasBottom1" aria-controls="offcanvasBottom">
                                             view
                                           </button>
-                                    <div class="offcanvas offcanvas-bottom" tabindex="-1" id="offcanvasBottom1" aria-labelledby="offcanvasBottomLabel" aria-hidden="true" style="visibility: hidden;">
-                                        <div class="offcanvas-header">
-                                            <h5 id="offcanvasBottomLabel" class="offcanvas-title">Drug History</h5>
-                                            <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
-                                        </div>
-                                        <div class="offcanvas-body">
-                                            <div class="table-responsive text-nowrap">
-                                                <table class="table card-table">
-                                                    <thead>
-                                                        <tr>
-                                                            <th>Name</th>
-                                                            <th>size(mg)</th>
-                                                            <th>prescribed by</th>
-                                                            <th>frequency</th>
-                                                            <th>more info</th>
-                                                            <th>date</th>
-                                                        </tr>
-                                                    </thead>
-                                                    <tbody class="table-border-bottom-0">
-                                                        {% for drlog in drlogs %}
-                                                        <tr>
-                                                            <td><i class="fab fa-angular fa-lg text-danger me-3"></i> <strong> {{drlog.Medicine.name}} </strong></td>
-                                                            <td>{{drlog.Medicine.size}} Mg</td>
-                                                            <td>Doc. {{drlog.administered_by.last_name}} {{drlog.administered_by.first_name}} </td>
-                                                            <td>{{drlog.frequency}} {{drlog.frequency_type}}</td>
-                                                            <td>{{drlog.more_description}}</td>
-                                                            <td>{{drlog.Date_prescribed}}</td>
-                                                        </tr>
-                                                        {%endfor%}
-                                                    </tbody>
-                                                </table>
+                                        <div class="offcanvas offcanvas-bottom" tabindex="-1" id="offcanvasBottom1" aria-labelledby="offcanvasBottomLabel" aria-hidden="true" style="visibility: hidden;">
+                                            <div class="offcanvas-header">
+                                                <h5 id="offcanvasBottomLabel" class="offcanvas-title">Drug History</h5>
+                                                <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+                                            </div>
+                                            <div class="offcanvas-body">
+                                                <div class="table-responsive text-nowrap">
+                                                    <table class="table card-table">
+                                                        <thead>
+                                                            <tr>
+                                                                <th>Name</th>
+                                                                <th>size(mg)</th>
+                                                                <th>prescribed by</th>
+                                                                <th>frequency</th>
+                                                                <th>more info</th>
+                                                                <th>date</th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody class="table-border-bottom-0">
+                                                            {% for drlog in drlogs %}
+                                                            <tr>
+                                                                <td><i class="fab fa-angular fa-lg text-danger me-3"></i> <strong> {{drlog.Medicine.name}} </strong></td>
+                                                                <td>{{drlog.Medicine.size}} Mg</td>
+                                                                <td>Doc. {{drlog.administered_by.last_name}} {{drlog.administered_by.first_name}} </td>
+                                                                <td>{{drlog.frequency}} {{drlog.frequency_type}}</td>
+                                                                <td>{{drlog.more_description}}</td>
+                                                                <td>{{drlog.Date_prescribed}}</td>
+                                                            </tr>
+                                                            {%endfor%}
+                                                        </tbody>
+                                                    </table>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
@@ -268,7 +326,6 @@
                 </div>
             </div>
         </div>
-    </div>
     </div>
 </body>
 <script src="/static/management/assets/vendor/libs/jquery/jquery.js"></script>
