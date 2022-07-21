@@ -80,7 +80,7 @@ def dashboard(request):
             return render(request, 'management/Pages/dashboard-pharmacy.html', context)
 
     else:
-        return redirect(request,"login_page")
+        return redirect("login_page")
 
 
 def check_patient(request):
@@ -152,6 +152,15 @@ def patient_full_info(request,pk):
             }
         return render(request, "management/Pages/pfl.html", context )
 
+
+def bkroom(request):
+    if request.method=='POST':
+       #Roomlog.objects.create(
+       #    Room_id= ,
+       #    Bed =,
+       #    Patient =   ,
+       #)
+       return None
 
 
 

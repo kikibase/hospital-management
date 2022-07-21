@@ -119,7 +119,7 @@ class Roomlog(models.Model):
         return f"Room: {self.Room.Room_NUMBER} at {self.Room.Room_location} is louged by {self.Patient.Patient_lastname} {self.Patient.Patient_firstname} between {self.checkin_time} to {(self.checkout_time if self.checkout_time is not None else 'present')} "    
 
     def save(self, *args, **kwargs) -> None: #when creating reference, ensure that the refernce is unique
-        if self.Bed <= self.Room.Available_beds:
+        if self.Bed <= self.Room.Avaialble_beds:
             super().save(*args, **kwargs)
         else:
             raise HttpResponseServerError('bed is above available bed space')
