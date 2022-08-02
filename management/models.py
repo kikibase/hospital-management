@@ -15,7 +15,7 @@ class staff_type(models.Model):#only if staff
     ]
     
                     
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
     type = models.CharField(max_length=200 ,choices= staff_types)
     Profile_image = models.ImageField(blank=True, null=True,default="Null")
     phone_number = models.CharField(max_length=250)
@@ -124,7 +124,7 @@ class Roomlog(models.Model):
         else:
             raise HttpResponseServerError('bed is above available bed space')
 
-        
+
 
 
 class Medicine(models.Model):
